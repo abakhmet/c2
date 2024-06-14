@@ -1,7 +1,7 @@
 {
   "name": "tesst",
   "short_name": "T2",
-  "start_url" : "/",
+  "start_url" : "/c2",
   "icons": [
     {
       "src": "icon-512.png",
