@@ -1,0 +1,12 @@
+{
+  "name": "tesst",
+  "short_name": "T2",
+  "start_url" : "/",
+  "icons": [
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512"
+    }
+  ],
+  "display": "standalone"
+}
