@@ -7,86 +7,89 @@
     <link rel="manifest" href="manifest.json" />
     <title>rotme</title>
     <style>
-      html {
+      html, body, canvas {
+        width: 100%;
+        height: 100%;
+        border: 0;
+        margin: 0;
+        overflow: hidden;
+      }
+
+      body {
         background-color: black;
-        width: 100%;
-        height: 100%;
-      }
-      
-      #svg {
-        position: fixed;
-        width: 100%;
-        height: 100%;
-        touch-action: none;
+        
       }
 
-      #spinner {
-        cursor: pointer;
-        border: solid 1px red !important;
-      }
-
-      .big-circle {
-        fill: dodgerblue;
-        stroke: limegreen;
-        stroke-width: 6;
-      }
-
-      .small-circle {
-        fill: black;
-      }
-
-      .line {
-        fill: none;
-        stroke: black;
-        stroke-width: 6;
-      }
-      #log {
-        text-align: center;
-        font-size: 24px;
-        margin-top: 20px;
-      }
     </style>
   </head>
   <body>
-    
-    <div id="log">0</div>
-    <svg id="svg" viewBox="200 200 600 600">
-      <g id="spinner">
-        <circle class="big-circle" cx="500" cy="500" r="200" />
-        <circle class="small-circle" cx="500" cy="500" r="12" />
-        <polyline class="line" points="500,500 500,300" />
-      </g>
-    </svg>
-
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/gsap@3.0.5/dist/gsap.min.js" ></script>
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/gsap@3.0.5/dist/Draggable.min.js" ></script>
-    <script type="text/javascript" src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/16327/InertiaPlugin.min.js" ></script>
-
+    <script type="text/javascript" src="pixi.js"></script>
     <script type="text/javascript">
 
-      function a(){
-        const e = document.createElement('p');
-        e.innerText = 'hohohoho';
-        document.getElementById('t').appendChild(e);
-      }
+//import { Application, Assets, Container, Sprite } from './pixi.js';
 
 
-      var log = document.querySelector("#log");
+(async () =>
+{
+    // Create a new application
+    const app = new PIXI.Application();
 
-      gsap.set("#spinner", {transformOrigin: "center"});
+    // Initialize the application
+    await app.init({ background: '#1099bb', resizeTo: window });
 
-      Draggable.create("#spinner", {
-        type: "rotation",
-        inertia: true,
-        onDrag: updateRotation,
-        onThrowUpdate: updateRotation
-      });
+    // Append the application canvas to the document body
+    document.body.appendChild(app.canvas);
 
-      function updateRotation() {
-        log.innerHTML = this.rotation.toFixed(1);
-      }
+    // Create and add a container to the stage
+    const container = new PIXI.Container();
+
+    app.stage.addChild(container);
+
+    // Load the bunny texture
+    const texture = await PIXI.Assets.load('https://pixijs.com/assets/bunny.png');
+
+    // Create a 5x5 grid of bunnies in the container
+    for (let i = 0; i < 25; i++)
+    {
+        const bunny = new PIXI.Sprite(texture);
+
+        bunny.x = (i % 5) * 40;
+        bunny.y = Math.floor(i / 5) * 40;
+        container.addChild(bunny);
+    }
+
+    // Move the container to the center
+    container.x = app.screen.width / 2;
+    container.y = app.screen.height / 2;
+
+    // Center the bunny sprites in local container coordinates
+    container.pivot.x = container.width / 2;
+    container.pivot.y = container.height / 2;
+
+    // Listen for animate update
+    app.ticker.add((time) =>
+    {
+        // Continuously rotate the container!
+        // * use delta to create frame-independent transform *
+        container.rotation -= 0.01 * time.deltaTime;
+    });
+
+    app.stage.eventMode = 'static';
+    app.stage.hitArea = app.screen;
+    app.stage.on('pointerup', onDragEnd);
+    app.stage.on('pointerupoutside', onDragEnd);
+    app.stage.on('pointerdown', onDragStart);
+
+    function onDragStart(e){
+      console.debug('start',e);
 
 
+    }
+    function onDragEnd(e){
+      console.debug('end',e);
+    }
+    
+})();
     </script>
   </body>
 </html>
