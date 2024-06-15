@@ -48,6 +48,8 @@
     // Load the bunny texture
     const texture = await PIXI.Assets.load('https://pixijs.com/assets/bunny.png');
 
+    console.debug(app);
+
     // Create a 5x5 grid of bunnies in the container
     for (let i = 0; i < 25; i++)
     {
@@ -96,12 +98,14 @@
       console.debug('end', starte, e);
 
       if (starte){
-        const dx = e.client.x - starte.x;
-        const dy = e.client.y - starte.y;
+        const dx = (e.client.x - starte.x) / app.renderer.view.screen.width;
+        const dy = (e.client.y - starte.y) / app.renderer.view.screen.width;
 
-        console.debug(dx, dy);
 
-        rs = dx / 5000;
+
+
+        rs = Math.sqrt(dx*dx + dy*dy) / 5 * (dx < 0 ? -1 : 1);
+        console.debug(dx, dy, rs);
 
         starte = null;
       }
