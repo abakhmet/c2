@@ -66,12 +66,14 @@
     container.pivot.x = container.width / 2;
     container.pivot.y = container.height / 2;
 
+    let rs = 0.01;
+
     // Listen for animate update
     app.ticker.add((time) =>
     {
         // Continuously rotate the container!
         // * use delta to create frame-independent transform *
-        container.rotation -= 0.01 * time.deltaTime;
+        container.rotation -= rs * time.deltaTime;
     });
 
     app.stage.eventMode = 'static';
@@ -80,14 +82,34 @@
     app.stage.on('pointerupoutside', onDragEnd);
     app.stage.on('pointerdown', onDragStart);
 
+    let starte = null;
+
     function onDragStart(e){
       console.debug('start',e);
 
+      starte = { x: e.client.x, y: e.client.y };
 
     }
     function onDragEnd(e){
-      console.debug('end',e);
+      console.debug('end', starte, e);
+
+      if (starte){
+        const dx = e.client.x - starte.x;
+        const dy = e.client.y - starte.y;
+
+        console.debug(dx, dy);
+
+        rs = dx / 5000;
+
+        starte = null;
+      }
+
     }
+
+    app.ticker.add(() =>
+    {
+        rs = rs / 1.004;
+    });
     
 })();
     </script>
